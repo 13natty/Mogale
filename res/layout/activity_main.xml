@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">    
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <fragment android:name="com.nattySoft.mogale.PlaceholderFragment"
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+            
+            <fragment android:name="com.nattySoft.mogale.IncidentDetailsFragment"
+            android:id="@+id/viewer"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        </TableRow>
+    </TableLayout>
+    
+    
+</LinearLayout>

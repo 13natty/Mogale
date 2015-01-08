@@ -1,0 +1,135 @@
+package com.nattySoft.mogale;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.nattySoft.mogale.MainActivity.SpazaAdapeter;
+import com.nattySoft.mogale.listener.IncidentClickedListener;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+/**
+ * A placeholder fragment containing a simple view.
+ */
+public class PlaceholderFragment extends Fragment {
+	
+	ListView menuList;
+	ArrayList<HashMap<String, String>> incidentslist = new ArrayList<HashMap<String, String>>();
+	ArrayList<HashMap<String, String>> incidentsBigList = new ArrayList<HashMap<String, String>>();
+	int[] icons = {R.drawable.ic_1,R.drawable.ic_2,R.drawable.ic_3,R.drawable.ic_4};
+
+	public PlaceholderFragment() {
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_main, container,
+				false);
+		return rootView;
+	}
+
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		menuList = (ListView) getActivity().findViewById(R.id.listView1);		
+	}
+	
+	public void setMenus(String responce, final IncidentClickedListener listener) {
+		
+		JSONObject incidents = null;
+		
+		// try parse the string to a JSON object
+		try {
+			incidents = new JSONObject(responce);
+		} catch (JSONException e) {
+			Log.e("JSON Parser", "Error parsing data " + e.toString());
+		}
+		
+		if(incidents!=null)
+		{
+			try {
+	
+				// Getting JSON Array from URL
+				String[] data = new String[incidents.length()];
+				Log.d("forst size", "data1 size "+data.length);
+				
+				JSONArray incidentsArray = incidents.getJSONArray("incidents");
+				
+				Log.d("forst size", "incidentsArray size "+incidentsArray.length());
+								
+				for (int i = 0; i < incidentsArray.length(); i++) {
+					HashMap<String, String> bigMap = new HashMap<String, String>();
+					JSONObject c = incidentsArray.getJSONObject(i);
+					// Storing JSON item in a Variable
+					String type = c.getString("type");
+					String created = c.getString("created");
+					String description = c.getString("description");
+					// Adding some value HashMap key => value
+					HashMap<String, String> map = new HashMap<String, String>();
+					map.put("type", type);
+					map.put("created", created);
+					map.put("description", description);
+					
+					incidentslist.add(map);			
+
+					// Adding all value HashMap key => value
+					bigMap.put("status", c.getString("status"));
+					bigMap.put("reporterSurname", c.getString("reporterSurname"));
+					//assignee object
+					JSONObject assigneeObject = c.optJSONObject("assignee");
+					if(assigneeObject != null)
+					{
+						bigMap.put("assigneeId", assigneeObject.getString("id"));
+						bigMap.put("assigneeName", assigneeObject.getString("name"));
+						bigMap.put("designation", assigneeObject.getString("designation"));
+						bigMap.put("assigneeSurname", assigneeObject.getString("surname"));
+						bigMap.put("active", assigneeObject.getString("active"));
+						bigMap.put("password", assigneeObject.getString("password"));
+					}
+					
+					bigMap.put("type", type);
+					bigMap.put("reporterName", c.getString("reporterName"));
+					bigMap.put("id", c.getString("id"));
+					bigMap.put("accountNumber", c.getString("accountNumber"));
+					bigMap.put("area", c.getString("area"));
+					bigMap.put("source", c.getString("source"));
+					bigMap.put("address", c.getString("address"));
+					bigMap.put("created", created);
+					bigMap.put("description", description);
+					bigMap.put("reporterIdNumber", c.getString("reporterIdNumber"));
+					bigMap.put("reporterContact", c.getString("reporterContact"));
+					bigMap.put("zone", c.getString("zone"));
+					incidentsBigList.add(bigMap);
+				}
+				MainActivity myActivity = new MainActivity();
+				SpazaAdapeter adapter = myActivity.new SpazaAdapeter(getActivity(), icons, incidentslist);
+				menuList.setAdapter(adapter);
+				listener.hasBeenClicked(incidentsBigList.get(0));
+				menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						Log.d("ITEM clicked", "productlist "+incidentsBigList.toString());
+						Log.d("ITEM clicked", "position "+position);
+						Log.d("ITEM clicked", "id "+id);
+						listener.hasBeenClicked(incidentsBigList.get(position));
+					}
+				});
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
