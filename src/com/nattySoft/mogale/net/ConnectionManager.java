@@ -45,7 +45,7 @@ public class ConnectionManager {
 
 	@SuppressWarnings("unchecked")
 	public void post(Context context, RequestResponseListener listener, ProgressDialog dialog, Pair<String, JSONObject> pair) {
-		Log.d(LOG_TAG, "pair..second "+pair.second);
+		Log.d(LOG_TAG, "pair.second "+pair.second);
 		new DoPost(context, listener, dialog).execute(pair);
 	}
 

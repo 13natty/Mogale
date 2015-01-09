@@ -29,6 +29,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -47,7 +48,7 @@ import android.os.Build;
 
 public class MainActivity extends ActionBarActivity implements FragmentComunicator, RequestResponseListener, IncidentClickedListener {
 
-	private Action action;
+	Action action;
 	FragmentComunicator fragComm;
 	private FragmentManager fragmentManager;
 	private String TAG = MainActivity.class.getSimpleName();
@@ -56,12 +57,21 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+	public int REQUEST_CODE_REG = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		final TypedArray styledAttributes = getBaseContext().getTheme().obtainStyledAttributes(
+                new int[] { android.R.attr.actionBarSize });
+int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
+Log.d(TAG, "mActionBarSize ="+mActionBarSize);
+styledAttributes.recycle();
+
 		this.savedInstanceState = savedInstanceState;
 		String regStr = Preferences.getPreference(this, AppConstants.PreferenceKeys.KEY_REGISTERED);
-		registered = regStr!=null && regStr.equalsIgnoreCase("true")?true:false;
+		registered = regStr != null && regStr.equalsIgnoreCase("true") ? true : false;
 		if (registered) {
 			// Check device for Play Services APK.
 			if (checkPlayServices()) {
@@ -72,24 +82,24 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 		} else {
 			action = Action.REGISTER;
 			Intent intent = new Intent(this, RegistrationActivity.class);
-			startActivityForResult(intent, 2);
+			startActivityForResult(intent, REQUEST_CODE_REG);
 		}
 	}
 
 	private void startApp(Bundle savedInstanceState) {
 		setContentView(R.layout.activity_main);
-//		if (savedInstanceState == null) {
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		// if (savedInstanceState == null) {
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-			ft.add(R.id.container, new PlaceholderFragment(), "list");
-			// ft.add(R.id.container, new IncidentDetailsFragment(),
-			// "viewer");
-			ft.commit();
-//		}
+		ft.add(R.id.container, new PlaceholderFragment(), "list");
+		// ft.add(R.id.container, new IncidentDetailsFragment(),
+		// "viewer");
+		ft.commit();
+		// }
 
 		fragmentManager = getSupportFragmentManager();
 		action = Action.GET_ALL_OPEN_INCIDENCES;
-		CommunicationHandler.getOpenIncidents(this, this, ProgressDialog.show(MainActivity.this, "Please wait", "Retrieving The Open Incidents..."));
+		CommunicationHandler.getOpenIncidents(this, this, ProgressDialog.show(MainActivity.this, "Please wait", "Retrieving Open Incidents..."));
 	}
 
 	@Override
@@ -265,23 +275,21 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 
 		// check if the request code is same as what is passed here it is 2
 		if (requestCode == 2) {
-//			startApp(savedInstanceState);
-			new AlertDialog.Builder(this)
-		    .setTitle("Delete entry")
-		    .setMessage("Are you sure you want to delete this entry?")
-		    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) { 
-		            // continue with delete
-		        }
-		     })
-		    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) { 
-		            // do nothing
-		        }
-		     })
-		    .setIcon(android.R.drawable.ic_dialog_alert)
-		     .show(); 
+			// startApp(savedInstanceState);
+			new AlertDialog.Builder(this).setTitle("Delete entry").setMessage("Are you sure you want to delete this entry?").setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					// continue with delete
+				}
+			}).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					// do nothing
+				}
+			}).setIcon(android.R.drawable.ic_dialog_alert).show();
 
+		} else if (requestCode == REQUEST_CODE_REG) {
+			//restart application after successful registration
+			finish();
+			startActivity(getIntent());
 		}
 
 	}

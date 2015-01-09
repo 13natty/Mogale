@@ -64,7 +64,7 @@ public class PlaceholderFragment extends Fragment {
 				String[] data = new String[incidents.length()];
 				Log.d("forst size", "data1 size "+data.length);
 				
-				JSONArray incidentsArray = incidents.getJSONArray("incidents");
+				JSONArray incidentsArray = incidents.getJSONArray("data");
 				
 				Log.d("forst size", "incidentsArray size "+incidentsArray.length());
 								

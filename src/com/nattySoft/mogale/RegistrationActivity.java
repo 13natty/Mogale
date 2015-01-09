@@ -137,9 +137,10 @@ public class RegistrationActivity extends Activity implements RequestResponseLis
 				public void onClick(DialogInterface dialog,int id) {
 				// // if this button is clicked, close
 				// // current activity
-				// RegistrationActivity.this.finish();
 					dialog.cancel();
 					RegistrationActivity.this.finish();
+					//now display main app
+					//the funcition callback called onActivityResult is called to display main app.
 				}
 			  });
 
