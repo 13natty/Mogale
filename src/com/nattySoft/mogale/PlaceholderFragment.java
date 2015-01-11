@@ -92,12 +92,13 @@ public class PlaceholderFragment extends Fragment {
 					{
 						bigMap.put("assigneeSize", ""+assigneeArr.length());
 						for (int j = 0; j < assigneeArr.length(); j++) {
-							JSONObject d = assigneeArr.getJSONObject(i);
+							JSONObject d = assigneeArr.getJSONObject(j);
 							bigMap.put("assigneeId_"+j, d.getString("id"));
 							bigMap.put("assigneeSuperiorId_"+j, d.getString("superiorId"));
 							bigMap.put("assigneeEmployeeNum_"+j, d.getString("employeeNum"));
 							bigMap.put("assigneeEmail_"+j, d.getString("email"));
 							bigMap.put("assigneeCellphone_"+j, d.getString("cellphone"));
+							String name = d.getString("name");
 							bigMap.put("assigneeName_"+j, d.getString("name"));
 							bigMap.put("designation_"+j, d.getString("designation"));
 							bigMap.put("assigneeSurname_"+j, d.getString("surname"));

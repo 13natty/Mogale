@@ -226,7 +226,7 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 			}
 			myImage.setImageResource(icons[category]);
 			desc.setText(productlist.get(position).get("description"));
-			price.setText((productlist.get(position).get("created")).substring(0, 9));
+			price.setText((productlist.get(position).get("created")).substring(0, 10));
 
 			return row;
 		}

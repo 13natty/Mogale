@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.nattySoft.mogale.MainActivity.incidentAdapeter;
 import com.nattySoft.mogale.R.id;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,13 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class IncidentDetailsFragment extends Fragment {
+public class IncidentDetailsFragment extends Fragment implements OnLongClickListener {
 	
 	ImageView image;
 	TextView title;
@@ -36,10 +40,11 @@ public class IncidentDetailsFragment extends Fragment {
 	TextView reporterIdNumber;
 	TextView reporterContact;
 	
-	ListView assigneeList;
+	LinearLayout assigneeLayout;
 	
 	Button acceptButton;
 	Button declineButton;
+	private ArrayList<HashMap<String, String>> assigneeAList;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater,@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,7 +67,7 @@ public class IncidentDetailsFragment extends Fragment {
 		reporterIdNumber = (TextView) getActivity().findViewById(R.id.reporterIdNumber);
 		reporterContact = (TextView) getActivity().findViewById(R.id.reporterContact);
 		
-		assigneeList = (ListView) getActivity().findViewById(id.assigneeView);
+		assigneeLayout = (LinearLayout) getActivity().findViewById(id.assigneeView);
 				
 		acceptButton = (Button) getActivity().findViewById(R.id.button_accept);
 		acceptButton.setOnClickListener(new OnClickListener() {
@@ -84,8 +89,8 @@ public class IncidentDetailsFragment extends Fragment {
 			title.setText(item.get("description"));
 			reporterName.setText(item.get("reporterName"));
 			reporterSurName.setText(item.get("reporterSurname"));
-			assigneeName.setText(item.get("assigneeName"));
-			assigneeSurName.setText(item.get("assigneeSurname"));
+			assigneeName.setText("");//item.get("assigneeName")
+			assigneeSurName.setText("");//item.get("assigneeSurname")
 			accountNumber.setText(item.get("accountNumber"));
 			Area.setText(item.get("area"));
 			Zone.setText(item.get("zone"));
@@ -93,8 +98,9 @@ public class IncidentDetailsFragment extends Fragment {
 			reporterContact.setText(item.get("reporterContact"));
 
 			int assigneeSize = Integer.parseInt(item.get("assigneeSize"));
-			ArrayList<HashMap<String, String>> assigneeAList;
 			assigneeAList = new ArrayList<HashMap<String, String>>();
+			
+			assigneeLayout.removeAllViews();
 			
 			for (int i = 0; i < assigneeSize; i++) {
 				HashMap<String, String> map = new HashMap<String, String>();
@@ -109,12 +115,18 @@ public class IncidentDetailsFragment extends Fragment {
 				map.put("active", item.get("active_"+i));
 				map.put("password", item.get("password_"+i));
 				
-				
 				assigneeAList.add(map);	
-				assigneeAdapeter adapter = new assigneeAdapeter(getActivity(), assigneeAList);
-				assigneeList.setAdapter(adapter);		
-				
+				TextView nameTV = new TextView(this.getActivity());
+				nameTV.setImeActionLabel(map.get("assigneeEmployeeNum"), -1);
+				nameTV.setText("Assignee Name : "+map.get("assigneeName"));
+				nameTV.setOnLongClickListener(this);
+				nameTV.setBackground(getResources().getDrawable(R.drawable.assignee_border));
+				assigneeLayout.addView(nameTV);
 			}
+			
+			
+//			assigneeAdapeter adapter = new assigneeAdapeter(getActivity(), assigneeAList);
+//			assigneeList.setAdapter(adapter);
 
 		}
 	}
@@ -174,6 +186,46 @@ public class IncidentDetailsFragment extends Fragment {
 
 			return count;
 		}
+	}
+
+	@Override
+	public boolean onLongClick(View v) {
+		Log.d(getTag(), "view has been clicked get ID "+v.getId());
+		TextView tv = (TextView)v;
+		String empNo = (String) tv.getImeActionLabel();
+		Log.d(getTag(), "view has been clicked get getText "+tv.getText());
+		Log.d(getTag(), "view has been clicked get empNo "+empNo);
+		for (int i = 0; i < assigneeAList.size(); i++) {
+			HashMap<String, String> objmap = assigneeAList.get(i);
+			String emp = objmap.get("assigneeEmployeeNum");
+			Log.d(getTag(), "emp "+emp);
+			if(emp.equalsIgnoreCase(empNo))
+			{
+				Dialog profDiag = new Dialog(this.getActivity());
+				profDiag.requestWindowFeature(Window.FEATURE_NO_TITLE);
+				profDiag.setContentView(R.layout.assignee_profile);
+				
+				TextView employeeNum = (TextView)profDiag.findViewById(R.id.assignee_employeeNum);
+				TextView email = (TextView)profDiag.findViewById(R.id.assignee_email);
+				TextView cell  = (TextView)profDiag.findViewById(R.id.assignee_cellphone);
+				TextView name = (TextView)profDiag.findViewById(R.id.assignee_name);
+				TextView designation = (TextView)profDiag.findViewById(R.id.assignee_designation);
+				TextView surname = (TextView)profDiag.findViewById(R.id.assignee_surname);
+				TextView active = (TextView)profDiag.findViewById(R.id.assignee_active);
+				
+				employeeNum.append(emp);
+				email.append(objmap.get("assigneeEmail"));
+				cell.append(objmap.get("assigneeCellphone"));
+				name.append(objmap.get("assigneeName"));
+				designation.append(objmap.get("designation"));
+				surname.append(objmap.get("assigneeSurname"));
+				active.append(objmap.get("active"));
+				
+				profDiag.show();
+				
+			}
+		}
+		return false;
 	}
 
 }
