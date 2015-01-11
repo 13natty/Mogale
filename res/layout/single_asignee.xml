@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/textView_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="ID : " />
+    
+    <TextView
+        android:id="@+id/textView_superiorId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_id"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Superior Id : " />
+
+    <TextView
+        android:id="@+id/textView_employeeNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_superiorId"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Employee Num : " />
+
+    <TextView
+        android:id="@+id/textView_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_employeeNum"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Email : " />
+
+    <TextView
+        android:id="@+id/textView_cellphone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_email"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Cellphone : " />
+
+    <TextView
+        android:id="@+id/textView_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_cellphone"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Name : " />
+
+    <TextView
+        android:id="@+id/textView_designation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_name"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Designation : " />
+
+    <TextView
+        android:id="@+id/textView_active"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_designation"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Active : " />
+
+    <TextView
+        android:id="@+id/textView_surname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_active"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:text="Surname : " />
+    
+
+</RelativeLayout>
