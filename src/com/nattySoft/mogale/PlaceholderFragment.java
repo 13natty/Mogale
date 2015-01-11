@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.nattySoft.mogale.MainActivity.SpazaAdapeter;
+import com.nattySoft.mogale.MainActivity.incidentAdapeter;
 import com.nattySoft.mogale.listener.IncidentClickedListener;
 
 import android.os.Bundle;
@@ -87,15 +87,23 @@ public class PlaceholderFragment extends Fragment {
 					bigMap.put("status", c.getString("status"));
 					bigMap.put("reporterSurname", c.getString("reporterSurname"));
 					//assignee object
-					JSONObject assigneeObject = c.optJSONObject("assignee");
-					if(assigneeObject != null)
+					JSONArray assigneeArr = c.optJSONArray("assignees");
+					if(assigneeArr != null)
 					{
-						bigMap.put("assigneeId", assigneeObject.getString("id"));
-						bigMap.put("assigneeName", assigneeObject.getString("name"));
-						bigMap.put("designation", assigneeObject.getString("designation"));
-						bigMap.put("assigneeSurname", assigneeObject.getString("surname"));
-						bigMap.put("active", assigneeObject.getString("active"));
-						bigMap.put("password", assigneeObject.getString("password"));
+						bigMap.put("assigneeSize", ""+assigneeArr.length());
+						for (int j = 0; j < assigneeArr.length(); j++) {
+							JSONObject d = assigneeArr.getJSONObject(i);
+							bigMap.put("assigneeId_"+j, d.getString("id"));
+							bigMap.put("assigneeSuperiorId_"+j, d.getString("superiorId"));
+							bigMap.put("assigneeEmployeeNum_"+j, d.getString("employeeNum"));
+							bigMap.put("assigneeEmail_"+j, d.getString("email"));
+							bigMap.put("assigneeCellphone_"+j, d.getString("cellphone"));
+							bigMap.put("assigneeName_"+j, d.getString("name"));
+							bigMap.put("designation_"+j, d.getString("designation"));
+							bigMap.put("assigneeSurname_"+j, d.getString("surname"));
+							bigMap.put("active_"+j, d.getString("active"));
+							bigMap.put("password_"+j, d.getString("password"));
+						}						
 					}
 					
 					bigMap.put("type", type);
@@ -113,7 +121,7 @@ public class PlaceholderFragment extends Fragment {
 					incidentsBigList.add(bigMap);
 				}
 				MainActivity myActivity = new MainActivity();
-				SpazaAdapeter adapter = myActivity.new SpazaAdapeter(getActivity(), icons, incidentslist);
+				incidentAdapeter adapter = myActivity.new incidentAdapeter(getActivity(), icons, incidentslist);
 				menuList.setAdapter(adapter);
 				listener.hasBeenClicked(incidentsBigList.get(0));
 				menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

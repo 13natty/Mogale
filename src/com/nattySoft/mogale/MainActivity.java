@@ -30,8 +30,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,8 +43,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -54,20 +60,28 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 	private String TAG = MainActivity.class.getSimpleName();
 	private boolean registered = false;
 	Bundle savedInstanceState = null;
+	MyTask myTask;
 
 	private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 	public int REQUEST_CODE_REG = 0;
+	private FrameLayout progressBarHolder;
+	public HashMap<String, String> item;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		final TypedArray styledAttributes = getBaseContext().getTheme().obtainStyledAttributes(
-                new int[] { android.R.attr.actionBarSize });
-int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
-Log.d(TAG, "mActionBarSize ="+mActionBarSize);
-styledAttributes.recycle();
+		final android.app.ActionBar actionBar = getActionBar();
+		BitmapDrawable background = new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.drawable.action_bar_bg));
+		background.setTileModeX(android.graphics.Shader.TileMode.CLAMP);
+		actionBar.setBackgroundDrawable(background);
+		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+		actionBar.setTitle("");
+
+		final TypedArray styledAttributes = getBaseContext().getTheme().obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
+		int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
+		Log.d(TAG, "mActionBarSize =" + mActionBarSize);
+		styledAttributes.recycle();
 
 		this.savedInstanceState = savedInstanceState;
 		String regStr = Preferences.getPreference(this, AppConstants.PreferenceKeys.KEY_REGISTERED);
@@ -97,6 +111,9 @@ styledAttributes.recycle();
 		ft.commit();
 		// }
 
+		// loading animation holder
+		progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
+				
 		fragmentManager = getSupportFragmentManager();
 		action = Action.GET_ALL_OPEN_INCIDENCES;
 		CommunicationHandler.getOpenIncidents(this, this, ProgressDialog.show(MainActivity.this, "Please wait", "Retrieving Open Incidents..."));
@@ -147,14 +164,14 @@ styledAttributes.recycle();
 		frag.setMenus(responce, this);
 	}
 
-	class SpazaAdapeter extends ArrayAdapter<String> {
+	class incidentAdapeter extends ArrayAdapter<String> {
 
 		Context context;
 		int[] icons;
 		ArrayList<HashMap<String, String>> productlist;
 		private View row;
 
-		public SpazaAdapeter(Context context, int[] icons, ArrayList<HashMap<String, String>> productlist) {
+		public incidentAdapeter(Context context, int[] icons, ArrayList<HashMap<String, String>> productlist) {
 			super(context, R.layout.single_incident);
 			this.context = context;
 			this.icons = icons;
@@ -232,8 +249,10 @@ styledAttributes.recycle();
 
 	@Override
 	public void incidentClicked(HashMap<String, String> item) {
-		IncidentDetailsFragment frag = (IncidentDetailsFragment) fragmentManager.findFragmentById(R.id.viewer);
-		frag.updateFields(item);
+		MainActivity.this.item = item;
+		myTask = new MyTask();
+		myTask.execute();
+		
 	}
 
 	@Override
@@ -287,11 +306,45 @@ styledAttributes.recycle();
 			}).setIcon(android.R.drawable.ic_dialog_alert).show();
 
 		} else if (requestCode == REQUEST_CODE_REG) {
-			//restart application after successful registration
+			// restart application after successful registration
 			finish();
 			startActivity(getIntent());
 		}
 
+	}
+
+	private class MyTask extends AsyncTask<Void, Void, Void> {
+
+		private AlphaAnimation inAnimation;
+		private AlphaAnimation outAnimation;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			inAnimation = new AlphaAnimation(0f, 1f);
+			inAnimation.setDuration(200);
+			progressBarHolder.setAnimation(inAnimation);
+			progressBarHolder.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+			
+			IncidentDetailsFragment frag = (IncidentDetailsFragment) fragmentManager.findFragmentById(R.id.viewer);
+			frag.updateFields(item);
+			
+			outAnimation = new AlphaAnimation(1f, 0f);
+			outAnimation.setDuration(200);
+			progressBarHolder.setAnimation(outAnimation);
+			progressBarHolder.setVisibility(View.GONE);
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			
+			return null;
+		}
 	}
 
 }

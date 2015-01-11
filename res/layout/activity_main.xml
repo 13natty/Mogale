@@ -19,14 +19,14 @@
                 android:name="com.nattySoft.mogale.PlaceholderFragment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.75" />
+                android:layout_weight="0.65" />
 
             <fragment
                 android:id="@+id/viewer"
                 android:name="com.nattySoft.mogale.IncidentDetailsFragment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1.35" />
         </TableRow>
     </TableLayout>
 
