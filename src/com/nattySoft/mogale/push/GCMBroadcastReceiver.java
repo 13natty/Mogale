@@ -17,6 +17,8 @@ import android.util.Log;
 
 import com.google.android.gms.analytics.n;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.nattySoft.mogale.MainActivity;
+import com.nattySoft.mogale.net.CommunicationHandler.Action;
 
 public final class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
 
@@ -38,6 +40,7 @@ public final class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
 			if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
+				
 				Log.d(LOG_TAG,
 	                    "Message received: " + extras.toString());
 				Log.d(LOG_TAG,

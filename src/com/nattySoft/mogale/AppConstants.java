@@ -11,8 +11,7 @@ public static class Config {
     	
     	public static final String KEY_REGISTERED = "registered";
     	public static final String KEY_REGISTRATION_ID = "registration_id";
-    	public static final String KEY_BALANCE = "balance";
-    	public static final String KEY_PRODUCTS = "products";
+    	
     	public static final String KEY_USER_ID = "UserID";
     	public static final String KEY_EMPLOYEE_NUM = "employee_number";
     }

@@ -54,7 +54,7 @@ import android.os.Build;
 
 public class MainActivity extends ActionBarActivity implements FragmentComunicator, RequestResponseListener, IncidentClickedListener {
 
-	Action action;
+	static Action action;
 	FragmentComunicator fragComm;
 	private FragmentManager fragmentManager;
 	private String TAG = MainActivity.class.getSimpleName();
@@ -78,10 +78,10 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 		actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 		actionBar.setTitle("");
 
-		final TypedArray styledAttributes = getBaseContext().getTheme().obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
-		int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
-		Log.d(TAG, "mActionBarSize =" + mActionBarSize);
-		styledAttributes.recycle();
+//		final TypedArray styledAttributes = getBaseContext().getTheme().obtainStyledAttributes(new int[] { android.R.attr.actionBarSize });
+//		int mActionBarSize = (int) styledAttributes.getDimension(0, 0);
+//		Log.d(TAG, "mActionBarSize =" + mActionBarSize);
+//		styledAttributes.recycle();
 
 		this.savedInstanceState = savedInstanceState;
 		String regStr = Preferences.getPreference(this, AppConstants.PreferenceKeys.KEY_REGISTERED);
@@ -122,7 +122,7 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.my_menu, menu);
 		return true;
 	}
 
@@ -132,7 +132,16 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.action_refresh) {
+			action = Action.GET_ALL_OPEN_INCIDENCES;
+			CommunicationHandler.getOpenIncidents(this, this, ProgressDialog.show(MainActivity.this, "Please wait", "Retrieving Open Incidents..."));
+			return true;
+		}
+		else if(id == R.id.action_chat) {
+//			action = Action.GET_ALL_OPEN_INCIDENCES;
+//			CommunicationHandler.getOpenIncidents(this, this, ProgressDialog.show(MainActivity.this, "Please wait", "Retrieving Open Incidents..."));
+			Intent chat_inent= new Intent(MainActivity.this,ChatActivity.class);
+			startActivity(chat_inent);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -149,19 +158,42 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 
 	@Override
 	public void hasResponse(String response) {
+		Log.d(TAG, "hasResponse***************");
 		if (!"-1".equals(response)) {
 			if (action == Action.GET_ALL_OPEN_INCIDENCES) {
 				fragComm = (FragmentComunicator) this;
 				fragComm.incidentsResponce(response);
-				Log.d("MenuFragment", "products " + response);
+				Log.d(TAG, "response " + response);
+			}
+			else if (action == Action.ACCEPT_INCIDENT) {
+				fragComm = (FragmentComunicator) (IncidentDetailsFragment) fragmentManager.findFragmentById(R.id.viewer);
+				fragComm.incidentsResponce(response);
+				Log.d(TAG, "response " + response);
+			}
+			else if (action == Action.DECLINE_INCIDENT) {
+				fragComm = (FragmentComunicator) (IncidentDetailsFragment) fragmentManager.findFragmentById(R.id.viewer);
+				fragComm.incidentsResponce(response);
+				Log.d(TAG, "response " + response);
+			}
+			else if(action == Action.GET_COMMENTS) {
+				fragComm = (FragmentComunicator) (IncidentDetailsFragment) fragmentManager.findFragmentById(R.id.viewer);
+				fragComm.incidentsResponce(response);
+				Log.d(TAG, "response " + response);
+			}
+			else if(action == Action.ADD_COMMENT) {
+				fragComm = (FragmentComunicator) (IncidentDetailsFragment) fragmentManager.findFragmentById(R.id.viewer);
+				fragComm.incidentsResponce(response);
+				Log.d(TAG, "response " + response);
 			}
 		}
 	}
 
 	@Override
 	public void incidentsResponce(String responce) {
+		Log.d(TAG, "responce **************");
 		PlaceholderFragment frag = (PlaceholderFragment) fragmentManager.findFragmentByTag("list");
-		frag.setMenus(responce, this);
+		if(action == Action.GET_ALL_OPEN_INCIDENCES)
+			frag.setMenus(responce, this);
 	}
 
 	class incidentAdapeter extends ArrayAdapter<String> {
@@ -186,44 +218,34 @@ public class MainActivity extends ActionBarActivity implements FragmentComunicat
 			ImageView myImage = (ImageView) row.findViewById(R.id.imageView1);
 			TextView desc = (TextView) row.findViewById(R.id.textView1);
 			TextView price = (TextView) row.findViewById(R.id.textView2);
-			// int category =
-			// Integer.parseInt(productlist.get(position).get("Category"));
+			
+			//int[] icons = {R.drawable.no_water_50,R.drawable.water_meter_50,R.drawable.burst_pipe_50,R.drawable.water_pump_50,R.drawable.resevoir,R.drawable.water_tower_50};
 			int category = 0;
 			Log.d("getView", "pos " + position);
-			switch (position) {
-			case 0:
-			case 14:
-			case 15:
+			switch (productlist.get(position).get("type")) {
+			case "No Water":
 				category = 0;
 				break;
-			case 7:
-			case 8:
-			case 10:
-			case 11:
-			case 12:
-			case 13:
-			case 16:
-			case 17:
-			case 18:
-			case 19:
-			case 21:
-			case 22:
-			case 23:
-			case 24:
+			case "Water Meter":
 				category = 1;
 				break;
-			case 2:
+			case "Water Pipe Bust":
 				category = 2;
 				break;
-			case 1:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 9:
+			case "Water Pump":
 				category = 3;
 				break;
+			case "Water Reservoir":
+				category = 4;
+				break;
+			case "Water Tower":
+				category = 5;
+				break;
+
+			default:
+				break;
 			}
+			
 			myImage.setImageResource(icons[category]);
 			desc.setText(productlist.get(position).get("description"));
 			price.setText((productlist.get(position).get("created")).substring(0, 10));

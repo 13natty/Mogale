@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import com.nattySoft.mogale.MainActivity.incidentAdapeter;
 import com.nattySoft.mogale.listener.IncidentClickedListener;
+import com.nattySoft.mogale.util.Preferences;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,10 +25,11 @@ import android.widget.ListView;
  */
 public class PlaceholderFragment extends Fragment {
 	
+	private String TAG = PlaceholderFragment.class.getSimpleName();
 	ListView menuList;
 	ArrayList<HashMap<String, String>> incidentslist = new ArrayList<HashMap<String, String>>();
 	ArrayList<HashMap<String, String>> incidentsBigList = new ArrayList<HashMap<String, String>>();
-	int[] icons = {R.drawable.ic_1,R.drawable.ic_2,R.drawable.ic_3,R.drawable.ic_4};
+	int[] icons = {R.drawable.no_water_50,R.drawable.water_meter_50,R.drawable.burst_pipe_50,R.drawable.water_pump_50,R.drawable.resevoir,R.drawable.water_tower_50};
 
 	public PlaceholderFragment() {
 	}
@@ -63,6 +65,7 @@ public class PlaceholderFragment extends Fragment {
 				// Getting JSON Array from URL
 				String[] data = new String[incidents.length()];
 				Log.d("forst size", "data1 size "+data.length);
+				Log.d(TAG, "incidents "+incidents);
 				
 				JSONArray incidentsArray = incidents.getJSONArray("data");
 				
@@ -107,7 +110,39 @@ public class PlaceholderFragment extends Fragment {
 						}						
 					}
 					
+					JSONArray accepteeArr = c.optJSONArray("acceptees");
+					boolean acctepted = false;
+					if(accepteeArr != null)
+					{
+						bigMap.put("accepteeSize", ""+accepteeArr.length());
+						for (int j = 0; j < accepteeArr.length(); j++) {
+							JSONObject d = accepteeArr.getJSONObject(j);
+							bigMap.put("accepteeId_"+j, d.getString("id"));
+							bigMap.put("accepteeSuperiorId_"+j, d.getString("superiorId"));
+							bigMap.put("accepteeEmployeeNum_"+j, d.getString("employeeNum"));
+							bigMap.put("accepteeEmail_"+j, d.getString("email"));
+							bigMap.put("accepteeCellphone_"+j, d.getString("cellphone"));
+							bigMap.put("accepteeName_"+j, d.getString("name"));
+							bigMap.put("designation_"+j, d.getString("designation"));
+							bigMap.put("accepteeSurname_"+j, d.getString("surname"));
+							bigMap.put("active_"+j, d.getString("active"));
+							bigMap.put("password_"+j, d.getString("password"));	
+							if(Preferences.getPreference(getActivity(), AppConstants.PreferenceKeys.KEY_EMPLOYEE_NUM).equals(d.getString("employeeNum")))
+							{
+								acctepted = true;
+							}
+						}						
+					}
+					if(acctepted)
+					{
+						bigMap.put("accepted", "true");
+					}
+					else
+					{
+						bigMap.put("accepted", "false");
+					}
 					bigMap.put("type", type);
+					bigMap.put("severity", c.getString("severity"));
 					bigMap.put("reporterName", c.getString("reporterName"));
 					bigMap.put("id", c.getString("id"));
 					bigMap.put("accountNumber", c.getString("accountNumber"));
