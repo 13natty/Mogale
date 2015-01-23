@@ -1,5 +1,6 @@
 package com.nattySoft.mogale;
 
+import com.nattySoft.mogale.listener.ChatResponceListener;
 import com.nattySoft.mogale.listener.RequestResponseListener;
 import com.nattySoft.mogale.net.CommunicationHandler;
 import com.nattySoft.mogale.net.CommunicationHandler.Action;
@@ -19,7 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-public class ChatActivity extends Activity implements RequestResponseListener{
+public class ChatActivity extends Activity implements RequestResponseListener, ChatResponceListener{
     
     private static final String TAG = ChatActivity.class.getSimpleName();
 
@@ -76,7 +77,14 @@ public class ChatActivity extends Activity implements RequestResponseListener{
     }
 
     private boolean sendChatMessage(){
-        chatArrayAdapter.add(new ChatMessage(side, chatText.getText().toString()));
+        chatArrayAdapter.add(new ChatMessage(true, chatText.getText().toString()));
+        chatText.setText("");
+        side = !side;
+        return true;
+    }
+    
+    public boolean sendChatMessage(String sender, String message, String time){
+        chatArrayAdapter.add(new ChatMessage(false, message));
         chatText.setText("");
         side = !side;
         return true;
@@ -86,6 +94,11 @@ public class ChatActivity extends Activity implements RequestResponseListener{
 	public void hasResponse(String response) {
 		Log.d(TAG, "Chat Reply "+response);
 		
+	}
+
+	@Override
+	public void hasResponse(String message, String sender, String time) {
+		sendChatMessage(sender, message, time);
 	}
 
 }

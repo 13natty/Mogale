@@ -71,6 +71,8 @@ public class PlaceholderFragment extends Fragment {
 				
 				Log.d("forst size", "incidentsArray size "+incidentsArray.length());
 								
+				incidentslist.clear();
+				
 				for (int i = 0; i < incidentsArray.length(); i++) {
 					HashMap<String, String> bigMap = new HashMap<String, String>();
 					JSONObject c = incidentsArray.getJSONObject(i);
