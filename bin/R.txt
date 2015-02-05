@@ -548,7 +548,7 @@ int layout assignee_profile 0x7f03001b
 int layout chat_layout 0x7f03001c
 int layout fragment_main 0x7f03001d
 int layout incident_comments 0x7f03001e
-int layout incidentdetails_flagment 0x7f03001f
+int layout incidentdetails_fragment 0x7f03001f
 int layout single_asignee 0x7f030020
 int layout single_chat_message 0x7f030021
 int layout single_comment 0x7f030022

@@ -69,7 +69,7 @@ public class IncidentDetailsFragment extends Fragment implements FragmentComunic
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		this.inflater = inflater;
-		return inflater.inflate(R.layout.incidentdetails_flagment, container, false);
+		return inflater.inflate(R.layout.incidentdetails_fragment, container, false);
 	}
 
 	@Override
